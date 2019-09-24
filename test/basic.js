@@ -8,34 +8,36 @@ describe('shopping cart', function() {
         const title = browser.getTitle()
         console.log(title);
         assert.strictEqual(title, 'React Shopping Cart');
-
+        //$$(.//div[@class='shelf-item']//div[@class='shelf-item__buy-btn']
         var selectors = {
-            "CheckoutBtn": ".//*[contains(text(),'Checkout')]",
-            "AddToCartBtn": ".//div[@class='shelf-item__buy-btn'][1]",
+            "CheckoutBtn": "div.buy-btn",
+            "AddToCartBtn": ".shelf-item__buy-btn",
             "ShirtSize": "(//span[contains(@class,'checkmark')])[2]",
+            "DeleteOrder": "div.shelf-item__del",
         }
 
         //select shirt size
         $(selectors["ShirtSize"]).waitForEnabled(5000);
         $(selectors["ShirtSize"]).click();
-        browser.pause(4000);
+        browser.pause(3000);
 
-        //Add all small shirts to cart, depends on the availble number of 'add to cart' button
-        //increment index of xpath
-        var i = 1;
-        while ($('(.//div[@class="shelf-item"]//div[@class="shelf-item__buy-btn"])['+ i +']').isExisting() == true) {
-            //click add to cart button
-            $('(.//div[@class="shelf-item"]//div[@class="shelf-item__buy-btn"])['+ i +']').waitForEnabled(5000);
-            $('(.//div[@class="shelf-item"]//div[@class="shelf-item__buy-btn"])['+ i +']').click();
-            i ++;
-            browser.pause(5000)
-          }
+        //Add to cart using $$ selector
+        $$(selectors["AddToCartBtn"]).map(x => x.click());
+        browser.pause(3000);
 
-        browser.pause(5000)
+        //Delete All from the cart
+        $$(selectors["DeleteOrder"]).map(x => x.click());
+        browser.pause(3000);
+        
+        //Add last small size shirt selection
+        $$(selectors["AddToCartBtn"]).pop().click();
+        browser.pause(2000)
+
         //cart checkout
         $(selectors["CheckoutBtn"]).waitForEnabled(5000);
         $(selectors["CheckoutBtn"]).click();
         browser.pause(2000)
+
         //Confirm checkout
         browser.acceptAlert();
         browser.pause(2000);    
